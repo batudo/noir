@@ -852,7 +852,7 @@ mod test {
         // }
         //
         // Here we're checking a situation where two identical arrays are being initialized twice and being assigned separate `ValueId`s.
-        // This would result in otherwise identical instructions not being deduplicated. 
+        // This would result in otherwise identical instructions not being deduplicated.
         let main_id = Id::test_new(0);
 
         // Compiling main
@@ -860,44 +860,13 @@ mod test {
         let v0 = builder.add_parameter(Type::unsigned(64));
         let zero = builder.numeric_constant(0u128, Type::unsigned(64));
         let typ = Type::Array(Rc::new(vec![Type::unsigned(64)]), 25);
-        
+
         let array_contents = vec![
-            v0,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
-            zero,
+            v0, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+            zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
         ];
-        let array1 = builder.array_constant(
-            array_contents.clone()
-            .into(),
-            typ.clone(),
-        );
-        let array2 = builder.array_constant(
-            array_contents
-            .into(),
-            typ.clone(),
-        );
+        let array1 = builder.array_constant(array_contents.clone().into(), typ.clone());
+        let array2 = builder.array_constant(array_contents.into(), typ.clone());
 
         let keccakf1600 =
             builder.import_intrinsic("keccakf1600").expect("keccakf1600 intrinsic should exist");
