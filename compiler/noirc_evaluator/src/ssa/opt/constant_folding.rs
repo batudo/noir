@@ -846,36 +846,64 @@ mod test {
     #[test]
     fn keccak256_regression() {
         // fn main f0 {
-        //   b0(v0: u8):
-        //     v1 = cast v0 as Field
-        //     v3 = add v1, Field 2⁵
-        //     v4 = truncate v3 to 64 bits, max_bit_size: 254
-        //     v5 = cast v3 as u64
+        //   b0(v0: u64):
         //     v10 = call keccakf1600([v5, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0])
         //     v11 = call keccakf1600([v5, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0, u64 0])
         // }
+        //
+        // Here we're checking a situation where two identical arrays are being initialized twice and being assigned separate `ValueId`s.
+        // This would result in otherwise identical instructions not being deduplicated. 
         let main_id = Id::test_new(0);
 
         // Compiling main
         let mut builder = FunctionBuilder::new("main".into(), main_id);
-        let v0 = builder.add_parameter(Type::unsigned(8));
-
-        let v1 = builder.insert_cast(v0, Type::field());
-        let thirty_two = builder.field_constant(32u128);
-        let v3 = builder.insert_binary(v1, BinaryOp::Add, thirty_two);
-        let v4 = builder.insert_truncate(v3, 64, 254);
-        let v5 = builder.insert_cast(v4, Type::unsigned(64));
-
+        let v0 = builder.add_parameter(Type::unsigned(64));
         let zero = builder.numeric_constant(0u128, Type::unsigned(64));
-        let two_pow_sixty_three = builder.numeric_constant(FieldElement::from(2u128).pow(&FieldElement::from(63u128)), Type::unsigned(64));
         let typ = Type::Array(Rc::new(vec![Type::unsigned(64)]), 25);
-        let array = builder.array_constant(vec![v5, zero, zero, zero, zero, zero, zero, zero, zero, zero,zero, zero, zero, zero, zero,zero, two_pow_sixty_three, zero, zero, zero,zero, zero, zero, zero, zero].into(), typ.clone());
+        
+        let array_contents = vec![
+            v0,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+            zero,
+        ];
+        let array1 = builder.array_constant(
+            array_contents.clone()
+            .into(),
+            typ.clone(),
+        );
+        let array2 = builder.array_constant(
+            array_contents
+            .into(),
+            typ.clone(),
+        );
 
+        let keccakf1600 =
+            builder.import_intrinsic("keccakf1600").expect("keccakf1600 intrinsic should exist");
+        let _v10 = builder.insert_call(keccakf1600, vec![array1], vec![typ.clone()]);
+        let _v11 = builder.insert_call(keccakf1600, vec![array2], vec![typ.clone()]);
 
-        let keccakf1600 = builder.import_intrinsic("keccakf1600").expect("keccakf1600 intrinsic should exist");
-        let _v10 = builder.insert_call(keccakf1600, vec![array], vec![typ.clone()]);
-        let _v11 = builder.insert_call(keccakf1600, vec![array], vec![typ.clone()]);
-      
         let ssa = builder.finish();
 
         println!("{ssa}");
@@ -883,7 +911,7 @@ mod test {
         let main = ssa.main();
         let instructions = main.dfg[main.entry_block()].instructions();
         let starting_instruction_count = instructions.len();
-        assert_eq!(starting_instruction_count, 6);
+        assert_eq!(starting_instruction_count, 2);
 
         let ssa = ssa.fold_constants();
 
@@ -892,6 +920,6 @@ mod test {
         let main = ssa.main();
         let instructions = main.dfg[main.entry_block()].instructions();
         let ending_instruction_count = instructions.len();
-        assert_eq!(ending_instruction_count, 5);
+        assert_eq!(ending_instruction_count, 1);
     }
 }
