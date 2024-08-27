@@ -21,7 +21,10 @@
 //! different blocks are merged, i.e. after the [`flatten_cfg`][super::flatten_cfg] pass.
 use std::collections::HashSet;
 
-use acvm::{acir::AcirField, FieldElement};
+use acvm::{
+    acir::{AcirField, BlackBoxFunc},
+    FieldElement,
+};
 use iter_extended::vecmap;
 
 use crate::ssa::{
@@ -29,7 +32,7 @@ use crate::ssa::{
         basic_block::BasicBlockId,
         dfg::{DataFlowGraph, InsertInstructionResult},
         function::Function,
-        instruction::{Instruction, InstructionId},
+        instruction::{Instruction, InstructionId, Intrinsic},
         types::Type,
         value::{Value, ValueId},
     },
@@ -137,6 +140,15 @@ impl Context {
         let instruction = Self::resolve_instruction(id, dfg, constraint_simplification_mapping);
         let old_results = dfg.instruction_results(id).to_vec();
 
+        let keccakf1600 = dfg.import_intrinsic(Intrinsic::BlackBox(BlackBoxFunc::Keccakf1600));
+        match instruction {
+            Instruction::Call { ref func, ref arguments } if *func == keccakf1600 => {
+                println!("{instruction:?}");
+                println!("{:?}", dfg.get_array_constant(arguments[0]));
+            }
+            _ => (),
+        }
+
         // If a copy of this instruction exists earlier in the block, then reuse the previous results.
         if let Some(cached_results) =
             Self::get_cached(dfg, instruction_result_cache, &instruction, *side_effects_enabled_var)
@@ -169,7 +181,7 @@ impl Context {
     /// Fetches an [`Instruction`] by its [`InstructionId`] and fully resolves its inputs.
     fn resolve_instruction(
         instruction_id: InstructionId,
-        dfg: &DataFlowGraph,
+        dfg: &mut DataFlowGraph,
         constraint_simplification_mapping: &HashMap<ValueId, ValueId>,
     ) -> Instruction {
         let instruction = dfg[instruction_id].clone();
@@ -180,14 +192,23 @@ impl Context {
         // This allows us to reach a stable final `ValueId` for each instruction input as we add more
         // constraints to the cache.
         fn resolve_cache(
-            dfg: &DataFlowGraph,
+            dfg: &mut DataFlowGraph,
             cache: &HashMap<ValueId, ValueId>,
             value_id: ValueId,
         ) -> ValueId {
             let resolved_id = dfg.resolve(value_id);
-            match cache.get(&resolved_id) {
+            let resolved_id = match cache.get(&resolved_id) {
                 Some(cached_value) => resolve_cache(dfg, cache, *cached_value),
                 None => resolved_id,
+            };
+
+            // There's gotta be a better way
+            if let Some((array_contents, typ)) = dfg.get_array_constant(resolved_id) {
+                let resolved_array =
+                    array_contents.into_iter().map(|val| resolve_cache(dfg, cache, val)).collect();
+                dfg.make_array(resolved_array, typ)
+            } else {
+                resolved_id
             }
         }
 
@@ -868,6 +889,8 @@ mod test {
         let array1 = builder.array_constant(array_contents.clone().into(), typ.clone());
         let array2 = builder.array_constant(array_contents.into(), typ.clone());
 
+        assert_eq!(array1, array2, "arrays were assigned different value ids");
+
         let keccakf1600 =
             builder.import_intrinsic("keccakf1600").expect("keccakf1600 intrinsic should exist");
         let _v10 = builder.insert_call(keccakf1600, vec![array1], vec![typ.clone()]);
@@ -880,7 +903,7 @@ mod test {
         let main = ssa.main();
         let instructions = main.dfg[main.entry_block()].instructions();
         let starting_instruction_count = instructions.len();
-        assert_eq!(starting_instruction_count, 2);
+        assert_eq!(starting_instruction_count, 3);
 
         let ssa = ssa.fold_constants();
 
