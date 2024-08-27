@@ -21,10 +21,7 @@
 //! different blocks are merged, i.e. after the [`flatten_cfg`][super::flatten_cfg] pass.
 use std::collections::HashSet;
 
-use acvm::{
-    acir::{AcirField, BlackBoxFunc},
-    FieldElement,
-};
+use acvm::{acir::AcirField, FieldElement};
 use iter_extended::vecmap;
 
 use crate::ssa::{
@@ -32,7 +29,7 @@ use crate::ssa::{
         basic_block::BasicBlockId,
         dfg::{DataFlowGraph, InsertInstructionResult},
         function::Function,
-        instruction::{Instruction, InstructionId, Intrinsic},
+        instruction::{Instruction, InstructionId},
         types::Type,
         value::{Value, ValueId},
     },
@@ -139,15 +136,6 @@ impl Context {
             constraint_simplification_mappings.entry(*side_effects_enabled_var).or_default();
         let instruction = Self::resolve_instruction(id, dfg, constraint_simplification_mapping);
         let old_results = dfg.instruction_results(id).to_vec();
-
-        let keccakf1600 = dfg.import_intrinsic(Intrinsic::BlackBox(BlackBoxFunc::Keccakf1600));
-        match instruction {
-            Instruction::Call { ref func, ref arguments } if *func == keccakf1600 => {
-                println!("{instruction:?}");
-                println!("{:?}", dfg.get_array_constant(arguments[0]));
-            }
-            _ => (),
-        }
 
         // If a copy of this instruction exists earlier in the block, then reuse the previous results.
         if let Some(cached_results) =
