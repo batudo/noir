@@ -5,6 +5,107 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.50.0](https://github.com/noir-lang/noir/compare/v0.49.0...v0.50.0) (2024-08-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* constant inputs for blackbox (https://github.com/AztecProtocol/aztec-packages/pull/7222)
+* add session id to foreign call RPC requests ([#5205](https://github.com/noir-lang/noir/issues/5205))
+* restrict noir word size to u32 ([#5180](https://github.com/noir-lang/noir/issues/5180))
+* switch `bb` over to read ACIR from nargo artifacts (https://github.com/AztecProtocol/aztec-packages/pull/6283)
+* specify databus arrays for BB (https://github.com/AztecProtocol/aztec-packages/pull/6239)
+* remove `Opcode::Brillig` from ACIR (https://github.com/AztecProtocol/aztec-packages/pull/5995)
+* AES blackbox (https://github.com/AztecProtocol/aztec-packages/pull/6016)
+* Bit shift is restricted to u8 right operand ([#4907](https://github.com/noir-lang/noir/issues/4907))
+
+### Features
+
+* `multi_scalar_mul` blackbox func (https://github.com/AztecProtocol/aztec-packages/pull/6097) ([73a635e](https://github.com/noir-lang/noir/commit/73a635e5086cf3407f9846ce39807cd15b4e485a))
+* `variable_base_scalar_mul` blackbox func (https://github.com/AztecProtocol/aztec-packages/pull/6039) ([73a635e](https://github.com/noir-lang/noir/commit/73a635e5086cf3407f9846ce39807cd15b4e485a))
+* **acir_gen:** Brillig stdlib ([#4848](https://github.com/noir-lang/noir/issues/4848)) ([0c8175c](https://github.com/noir-lang/noir/commit/0c8175cb539efd9427c73ae5af0d48abe688ebab))
+* **acir_gen:** Width aware ACIR gen addition ([#5493](https://github.com/noir-lang/noir/issues/5493)) ([85fa592](https://github.com/noir-lang/noir/commit/85fa592fdef3b8589ce03b232e1b51565837b540))
+* Activate return_data in ACIR opcodes ([#5080](https://github.com/noir-lang/noir/issues/5080)) ([c9fda3c](https://github.com/noir-lang/noir/commit/c9fda3c7fd4575bfe7d457e8d4230e071f0129a0))
+* Add native rust implementation of schnorr signature verification ([#5053](https://github.com/noir-lang/noir/issues/5053)) ([fab1c35](https://github.com/noir-lang/noir/commit/fab1c3567d731ea7902635a7a020a8d14f94fd27))
+* Add native rust implementations of pedersen functions ([#4871](https://github.com/noir-lang/noir/issues/4871)) ([fb039f7](https://github.com/noir-lang/noir/commit/fb039f74df23aea39bc0593a5d538d82b4efadf0))
+* Add recursive aggregation object to proving/verification keys (https://github.com/AztecProtocol/aztec-packages/pull/6770) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Add session id to foreign call RPC requests ([#5205](https://github.com/noir-lang/noir/issues/5205)) ([14adafc](https://github.com/noir-lang/noir/commit/14adafc965fa9c833e096ec037e086aae67703ad))
+* Adding aggregation to honk and rollup (https://github.com/AztecProtocol/aztec-packages/pull/7466) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* AES blackbox (https://github.com/AztecProtocol/aztec-packages/pull/6016) ([73a635e](https://github.com/noir-lang/noir/commit/73a635e5086cf3407f9846ce39807cd15b4e485a))
+* Avoid heap allocs when going to/from field (https://github.com/AztecProtocol/aztec-packages/pull/7547) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Bit shift is restricted to u8 right operand ([#4907](https://github.com/noir-lang/noir/issues/4907)) ([c4b0369](https://github.com/noir-lang/noir/commit/c4b03691feca17ef268acab523292f3051f672ea))
+* Constant inputs for blackbox (https://github.com/AztecProtocol/aztec-packages/pull/7222) ([fb97bb9](https://github.com/noir-lang/noir/commit/fb97bb9b795c9d7af395b82fd6f0ea8111d59c11))
+* Dynamic assertion payloads v2 (https://github.com/AztecProtocol/aztec-packages/pull/5949) ([73a635e](https://github.com/noir-lang/noir/commit/73a635e5086cf3407f9846ce39807cd15b4e485a))
+* Handle `BrilligCall` opcodes in the debugger ([#4897](https://github.com/noir-lang/noir/issues/4897)) ([b380dc4](https://github.com/noir-lang/noir/commit/b380dc44de5c9f8de278ece3d531ebbc2c9238ba))
+* Hook up secondary calldata column in dsl (https://github.com/AztecProtocol/aztec-packages/pull/7759) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Increase default expression width to 4 ([#4995](https://github.com/noir-lang/noir/issues/4995)) ([f01d309](https://github.com/noir-lang/noir/commit/f01d3090759a5ff0f1f83c5616d22890c6bd76be))
+* Integrate new proving systems in e2e (https://github.com/AztecProtocol/aztec-packages/pull/6971) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Make ACVM generic across fields ([#5114](https://github.com/noir-lang/noir/issues/5114)) ([70f374c](https://github.com/noir-lang/noir/commit/70f374c06642962d8f2b95b80f8c938fcf7761d7))
+* Make Brillig do integer arithmetic operations using u128 instead of Bigint (https://github.com/AztecProtocol/aztec-packages/pull/7518) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Make token transfer be recursive (https://github.com/AztecProtocol/aztec-packages/pull/7730) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Move abi demonomorphizer to noir_codegen and use noir_codegen in protocol types (https://github.com/AztecProtocol/aztec-packages/pull/6302) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* Move to_radix to a blackbox (https://github.com/AztecProtocol/aztec-packages/pull/6294) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* **nargo:** Hidden option to show contract artifact paths written by `nargo compile` (https://github.com/AztecProtocol/aztec-packages/pull/6131) ([ff67e14](https://github.com/noir-lang/noir/commit/ff67e145d086bf6fdf58fb5e57927033e52e03d3))
+* Note hashes as points (https://github.com/AztecProtocol/aztec-packages/pull/7618) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Optimize constant array handling in brillig_gen (https://github.com/AztecProtocol/aztec-packages/pull/7661) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Parsing non-string assertion payloads in noir js (https://github.com/AztecProtocol/aztec-packages/pull/6079) ([73a635e](https://github.com/noir-lang/noir/commit/73a635e5086cf3407f9846ce39807cd15b4e485a))
+* Pass calldata ids to the backend (https://github.com/AztecProtocol/aztec-packages/pull/7875) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Private Kernel Recursion (https://github.com/AztecProtocol/aztec-packages/pull/6278) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* **profiler:** Add support for brillig functions in opcodes-flamegraph (https://github.com/AztecProtocol/aztec-packages/pull/7698) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Proper padding in ts AES and constrained AES in body and header computations (https://github.com/AztecProtocol/aztec-packages/pull/6269) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* Remove conditional compilation of `bn254_blackbox_solver` ([#5058](https://github.com/noir-lang/noir/issues/5058)) ([9420d7c](https://github.com/noir-lang/noir/commit/9420d7c2ba6bbbf5ecb9a066837c505310955b6c))
+* Remove external blackbox solver from acir simulator (https://github.com/AztecProtocol/aztec-packages/pull/6586) ([a40a9a5](https://github.com/noir-lang/noir/commit/a40a9a55571deed386688fb84260bdf2794d4d38))
+* Removing superfluous call to MSM (https://github.com/AztecProtocol/aztec-packages/pull/7708) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Report gates and VKs of private protocol circuits with megahonk (https://github.com/AztecProtocol/aztec-packages/pull/7722) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Restrict noir word size to u32 ([#5180](https://github.com/noir-lang/noir/issues/5180)) ([bdb2bc6](https://github.com/noir-lang/noir/commit/bdb2bc608ea8fd52d46545a38b68dd2558b28110))
+* Separate runtimes of SSA functions before inlining ([#5121](https://github.com/noir-lang/noir/issues/5121)) ([69eca9b](https://github.com/noir-lang/noir/commit/69eca9b8671fa54192bef814dd584fdb5387a5f7))
+* Set aztec private functions to be recursive (https://github.com/AztecProtocol/aztec-packages/pull/6192) ([73a635e](https://github.com/noir-lang/noir/commit/73a635e5086cf3407f9846ce39807cd15b4e485a))
+* Simplify constant calls to `poseidon2_permutation`, `schnorr_verify` and `embedded_curve_add` ([#5140](https://github.com/noir-lang/noir/issues/5140)) ([2823ba7](https://github.com/noir-lang/noir/commit/2823ba7242db788ca1d7f6e7a48be2f1de62f278))
+* Specify databus arrays for BB (https://github.com/AztecProtocol/aztec-packages/pull/6239) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* Switch `bb` over to read ACIR from nargo artifacts (https://github.com/AztecProtocol/aztec-packages/pull/6283) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/5935) ([1b867b1](https://github.com/noir-lang/noir/commit/1b867b121fba5db3087ca845b4934e6732b23fd1))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/5955) ([1b867b1](https://github.com/noir-lang/noir/commit/1b867b121fba5db3087ca845b4934e6732b23fd1))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/5999) ([1b867b1](https://github.com/noir-lang/noir/commit/1b867b121fba5db3087ca845b4934e6732b23fd1))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/6280) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/6332) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/6573) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7392) ([fb97bb9](https://github.com/noir-lang/noir/commit/fb97bb9b795c9d7af395b82fd6f0ea8111d59c11))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7400) ([fb97bb9](https://github.com/noir-lang/noir/commit/fb97bb9b795c9d7af395b82fd6f0ea8111d59c11))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7432) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7444) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7454) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7512) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7577) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7583) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7743) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7862) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7945) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* ToRadix BB + avm transpiler support (https://github.com/AztecProtocol/aztec-packages/pull/6330) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* TXE nr deployments, dependency cleanup for CLI (https://github.com/AztecProtocol/aztec-packages/pull/7548) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Typing return values of embedded_curve_ops (https://github.com/AztecProtocol/aztec-packages/pull/7413) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+
+
+### Bug Fixes
+
+* Add support for nested arrays returned by oracles ([#5132](https://github.com/noir-lang/noir/issues/5132)) ([f846879](https://github.com/noir-lang/noir/commit/f846879dd038328bd0a1d39a72b448ef52a1002b))
+* Add trailing extra arguments for backend in gates_flamegraph (https://github.com/AztecProtocol/aztec-packages/pull/7472) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Avoid unnecessarily splitting expressions with multiplication terms with a shared term ([#5291](https://github.com/noir-lang/noir/issues/5291)) ([19884f1](https://github.com/noir-lang/noir/commit/19884f161dfc7d7ce75dd2c404b8ef39cdad2240))
+* Check for public args in aztec functions (https://github.com/AztecProtocol/aztec-packages/pull/6355) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+* **debugger:** Update the debugger to handle the new Brillig debug metadata format ([#5706](https://github.com/noir-lang/noir/issues/5706)) ([a31f82e](https://github.com/noir-lang/noir/commit/a31f82e598def60d00c65b79b8c5411f8aa832aa))
+* Deflatten databus visibilities (https://github.com/AztecProtocol/aztec-packages/pull/7761) ([4ea25db](https://github.com/noir-lang/noir/commit/4ea25dbde87488e758139619a3ce4edf93c6ebd6))
+* Do not duplicate redundant Brillig debug metadata ([#5696](https://github.com/noir-lang/noir/issues/5696)) ([e4f7dbe](https://github.com/noir-lang/noir/commit/e4f7dbe63b55807b3ff0b4d6f47a8b7f847299fb))
+* Handle multiple entry points for Brillig call stack resolution after metadata deduplication ([#5788](https://github.com/noir-lang/noir/issues/5788)) ([38fe9dd](https://github.com/noir-lang/noir/commit/38fe9dda111952fdb894df90a319c087382edfc9))
+* Handle struct with nested arrays in oracle return values ([#5244](https://github.com/noir-lang/noir/issues/5244)) ([a30814f](https://github.com/noir-lang/noir/commit/a30814f1f767bf874cd7e2969f5061c68f16b9a7))
+* Move BigInt modulus checks to runtime in brillig ([#5374](https://github.com/noir-lang/noir/issues/5374)) ([741d339](https://github.com/noir-lang/noir/commit/741d33991f8e2918bf092c354ca56047e0274533))
+* Revert "feat: Sync from noir (https://github.com/AztecProtocol/aztec-packages/pull/7512)" (https://github.com/AztecProtocol/aztec-packages/pull/7558) ([daad75c](https://github.com/noir-lang/noir/commit/daad75c26d19ae707b90a7424b77dab9937e8575))
+* Runtime brillig bigint id assignment ([#5369](https://github.com/noir-lang/noir/issues/5369)) ([a8928dd](https://github.com/noir-lang/noir/commit/a8928ddcffcae15babf7aa5aff0e462e4549552e))
+* Temporarily revert to_radix blackbox (https://github.com/AztecProtocol/aztec-packages/pull/6304) ([436bbda](https://github.com/noir-lang/noir/commit/436bbdaadb2a294b94f93e53d7d3cad3859c7e46))
+
+
+### Miscellaneous Chores
+
+* Remove `Opcode::Brillig` from ACIR (https://github.com/AztecProtocol/aztec-packages/pull/5995) ([73a635e](https://github.com/noir-lang/noir/commit/73a635e5086cf3407f9846ce39807cd15b4e485a))
+
 ## [0.49.0](https://github.com/noir-lang/noir/compare/v0.48.0...v0.49.0) (2024-08-06)
 
 
